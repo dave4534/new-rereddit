@@ -8,6 +8,8 @@ router.get('/', function(req, res, next) {
   res.send('this is from /!');
 });
 
+// server side post request, saves the data that was
+// created according to the schema TO the /posts route
 router.post('/posts', function(req, res, next) {
   var post = new Post(req.body);
 

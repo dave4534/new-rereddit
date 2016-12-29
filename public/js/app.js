@@ -1,3 +1,4 @@
+// app.js defines the app and its states
 var app = angular.module('rereddit', ['ui.router']);
 
 app.config([
