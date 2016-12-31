@@ -1,15 +1,33 @@
 var express = require('express');
 var router = express.Router();
-var Comment = require('.././models/comments');
+// commented out because not sure if needed
+// var mongoose = require('mongoose');
 
 var Post = require('.././models/posts');
+var Comment = require('.././models/comments');
 
-router.get('/', function(req, res, next) {
-  res.send('this is from /!');
+// not sure what this is for so commented it out
+// router.get('/', function(req, res, next) {
+//   res.send('this is from /!');
+// });
+
+// GET all posts from db
+router.get('/posts', function(req, res, next){
+  //find is a mongoose query that is predefined
+  Post.find(function(error, posts){
+    res.send(posts);
+  });
 });
 
-// server side post request, saves the data that was
-// created according to the schema TO the /posts route
+// GET specific post from db
+router.get('/posts/:post', function(req, res, next){
+  //find is a mongoose query that is predefined
+  req.post.populate('comments', function(err, post){
+    res.send(post);
+  });
+});
+
+// new post POST request
 router.post('/posts', function(req, res, next) {
   var post = new Post(req.body);
 
@@ -20,6 +38,7 @@ router.post('/posts', function(req, res, next) {
   });
 }); 
 
+// find a post by id
 router.param('post', function(req, res, next, id) {
   var query = Post.findById(id);
   console.log('got here');
@@ -33,6 +52,7 @@ router.param('post', function(req, res, next, id) {
   });
 });
 
+// add comment to specific post
 router.post('/posts/:post/comments', function(req, res, next) {
   var comment = new Comment(req.body);
   comment.post = req.post._id;
@@ -46,20 +66,6 @@ router.post('/posts/:post/comments', function(req, res, next) {
 
       res.json(comment);
     });
-  });
-});
-
-router.get('/posts', function(req, res, next){
-  //find is a mongoose query that is predefined
-  Post.find(function(error, posts){
-    res.send(posts);
-  });
-});
-
-router.get('/posts/:post', function(req, res, next){
-  //find is a mongoose query that is predefined
-  req.post.populate('comments', function(err, post){
-    res.send(post);
   });
 });
 

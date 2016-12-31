@@ -21,14 +21,25 @@ app.controller('MainCtrl', ['$scope','posts', '$state', function($scope, posts, 
     $scope.link = '';
   };
 
-  $scope.incrementUpvotes = function(item) {
-    item.upvotes += 1;
+  // invoking the GET request in the service, to show a post
+  $scope.getPost = function(id){
+    posts.get(id);
   };
 
-  // this is invoked from the client?
-  $scope.getComment = function(id) {
-    posts.get(id);
-    // $state.go('post');
+  $scope.incrementUpvotes = function(item) {
+    // updating view
+    item.upvotes += 1;
+
+    // updating service
+    posts.upvote(item);
+    console.log('mainController printing upvoted item:' + item);
   };
+
+  // this is invoked when click on 'comments'
+  // $scope.getComment = function(id) {
+  //   // console.log('mainController invoking get request of comment');
+  //   posts.get(id);
+  //   // $state.go('post');
+  // };
 
 }]);
