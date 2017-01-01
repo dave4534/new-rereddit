@@ -52,11 +52,27 @@ router.param('post', function(req, res, next, id) {
   });
 });
 
+// router param for comment
+router.param('comment', function(req, res, next, id) {
+  // searching in the db for id
+  var query = Comment.findById(id);
+  console.log('got here');
+  // back from db, to this middleware function
+  query.exec(function (err, comment){
+    if (err) { return next(err); }
+    if (!comment) { return next(new Error('can\'t find comment')); }
+
+    req.comment = comment;
+    //req = { comment: {text: 'coool', _id: 890986}}
+    return next();
+  });
+});
+
+
 // add comment to specific post
 router.post('/posts/:post/comments', function(req, res, next) {
   var comment = new Comment(req.body);
   comment.post = req.post._id;
-
   comment.save(function(err, comment){
     if(err){ return next(err); }
 
@@ -67,6 +83,22 @@ router.post('/posts/:post/comments', function(req, res, next) {
       res.json(comment);
     });
   });
+});
+
+// PUT request to increment upvotes on a post
+router.put('/posts/:post', function(req, res){
+  req.post.upvotes ++;
+  req.post.save();
+  res.send('server upvote function invoked');
+});
+
+// upvote a comment
+router.put('/comments/:comment', function(req, res){
+  // req.params.comment === 8907546
+  req.comment.upvotes++;
+  req.comment.save();
+  res.send('h7hh');
+
 });
 
 module.exports = router;

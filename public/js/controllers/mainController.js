@@ -1,5 +1,5 @@
 app.controller('MainCtrl', ['$scope','posts', '$state', function($scope, posts, $state){
-  $scope.posts = posts.posts;
+  $scope.posts = posts.postsArray;
 
   $scope.addPost = function() {
     // if there is nothing in the input, return (exit) the function
@@ -31,15 +31,26 @@ app.controller('MainCtrl', ['$scope','posts', '$state', function($scope, posts, 
     item.upvotes += 1;
 
     // updating service
-    posts.upvote(item);
+    posts.upvote(item._id).then(function(data){
+      console.log('back in the controller');
+      console.log(data);
+    });//$http.put(/posts/:post)
     console.log('mainController printing upvoted item:' + item);
   };
 
   // this is invoked when click on 'comments'
-  // $scope.getComment = function(id) {
-  //   // console.log('mainController invoking get request of comment');
-  //   posts.get(id);
-  //   // $state.go('post');
-  // };
+  
+  $scope.incrementCommentUpvotes = function(comment){
+    comment.upvotes++;
+    console.log('heres the comment in the ctrl ');
+    console.log(comment)
+    posts.upvoteComment(comment);
+  };
+
+  $scope.getComment = function(id) {
+    // console.log('mainController invoking get request of comment');
+    posts.get(id);
+    // $state.go('post');
+  };
 
 }]);
